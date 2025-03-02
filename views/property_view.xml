@@ -149,8 +149,8 @@
                                     <field name="facades"/>
                                     <field name="garage" widget="boolean_toggle"/>
                                     <field name="garden"/>
-                                    <field name="garden_area"/>
-                                    <field name="garden_orientation" widget="radio"/>
+                                    <field name="garden_area" attrs="{'invisible': [('garden', '=', False)]}"/>
+                                    <field name="garden_orientation" widget="radio" attrs="{'invisible': [('garden', '=', False)]}"/>
                                     <field name="total_area"/>
                                 </group>
                             </page>
