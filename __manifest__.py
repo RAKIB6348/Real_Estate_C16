@@ -20,6 +20,12 @@
         'views/property_offer.xml',
         'views/menu_items.xml',
     ],
+    # 'assets': {
+    #     'web.assets_backend': [
+    #         'real_estate/static/src/js/my_custom_tag.js',
+    #         'real_estate/static/src/xml/my_custom_tag.xml',
+    #     ]
+    # },
 
     'installable': True,
     'auto_install': False,

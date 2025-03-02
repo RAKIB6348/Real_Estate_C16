@@ -9,6 +9,7 @@
             <menuitem id="menu_property_type" name="Property Type" action="real_estate.action_menu_property_type"/>
             <menuitem id="menu_property_tag" name="Property Tag" action="real_estate.action_menu_property_tag"/>
             <menuitem id="menu_property_offer" name="Property Offer" action="real_estate.action_menu_property_offer"/>
+            <menuitem id="menu_test_client_action" name="Test Client Action" action="real_estate.action_custom_client_action"/>
         </menuitem>
     </menuitem>
 
