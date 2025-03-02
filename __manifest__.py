@@ -13,6 +13,7 @@
 
         'data/property_type_data.xml',
         'data/patient_tag_demo_data_load.xml',
+        'data/property_offer_cron.xml',
 
         'views/property_view.xml',
         'views/property_type_view.xml',

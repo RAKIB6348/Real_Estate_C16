@@ -75,3 +75,10 @@ class PropertyOffer(models.Model):
     def action_cancel_offer(self):
         self.status = 'refused'
 
+
+
+    def _extend_offer_deadline(self):
+        offer_ids = self.env['real.estate.property.offer'].search([])
+        for offer in offer_ids:
+            offer.validity = offer.validity + 1
+
