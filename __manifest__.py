@@ -9,6 +9,7 @@
     'depends': [],
     'data': [
         'security/ir.model.access.csv',
+        'security/res_groups.xml',
 
         'data/property_type_data.xml',
         'data/patient_tag_demo_data_load.xml',
