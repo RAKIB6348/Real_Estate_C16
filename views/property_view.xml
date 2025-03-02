@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+
+        <record id="action_view_form_property_offer" model="ir.actions.act_window">
+            <field name="name">Property</field>
+            <field name="res_model">real.estate.property.offer</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('property_id', '=', active_id)]</field>
+        </record>
+
+
+        <record id="quick_create_real_estate_property_form_view" model="ir.ui.view">
+            <field name="name">real.estate.property.form</field>
+            <field name="model">real.estate.property</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="real_estate_property_graph_view" model="ir.ui.view">
+            <field name="name">real.estate.property.graph</field>
+            <field name="model">real.estate.property</field>
+            <field name="arch" type="xml">
+                <graph>
+                    <field name="name" type="row"/>
+                    <field name="selling_price" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+
+        <record id="real_estate_property_pivot_view" model="ir.ui.view">
+            <field name="name">real.estate.property.pivot</field>
+            <field name="model">real.estate.property</field>
+            <field name="arch" type="xml">
+                <pivot>
+                    <field name="name" type="row"/>
+                    <field name="selling_price" type="measure"/>
+                    <field name="expected_price" type="measure"/>
+                    <field name="facades" type="measure"/>
+                    <field name="bedrooms" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="real_estate_property_kanban_view" model="ir.ui.view">
+            <field name="name">real.estate.property.kanban</field>
+            <field name="model">real.estate.property</field>
+            <field name="arch" type="xml">
+                <kanban default_group_by="state" on_create="quick_create"
+                        quick_create_view="real_estate.quick_create_real_estate_property_form_view">
+                    <field name="name"/>
+                    <field name="state"/>
+                    <field name="post_code"/>
+                    <field name="buyer_id"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div name="oe_kanban_global_click">
+                                <div class="oe_kanban_global_click">
+                                    <div class="oe_kanban_details">
+                                        <strong class="o_kanban_record_title">
+                                            <field name="name"/>
+                                        </strong>
+                                        <div class="o_kanban_tags_section">
+                                            <field name="tag_ids" widget="many2many_tags"
+                                                   options="{'color_field': 'color'}"/>
+                                        </div>
+
+
+                                        <div class="o_kanban_record_bottom">
+                                            <div class="oe_kanban_bottom_left">
+                                                <field name="offer_count"/>
+                                                Offer(s)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+
+        <record id="real_estate_property_tree_view" model="ir.ui.view">
+            <field name="name">real.estate.property.tree</field>
+            <field name="model">real.estate.property</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="type_id"/>
+                    <field name="post_code"/>
+                    <field name="date_available"/>
+                    <field name="expected_price"/>
+                    <field name="best_offer"/>
+                    <field name="selling_price"/>
+                    <field name="state" widget="badge"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="real_estate_property_form_view" model="ir.ui.view">
+            <field name="name">real.estate.property.form</field>
+            <field name="model">real.estate.property</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="action_sold" string="Sold" type="object" class="oe_highlight"/>
+                        <button name="action_cancel" string="Cancel" type="object" class="btn-danger"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <!--                            <button name="%(real_estate.action_view_form_property_offer)d" type="action" class="oe_stat_button">-->
+                            <!--                                <field name="offer_count" string="Offers" widget="statinfo"/>-->
+                            <!--                            </button>-->
+                            <button name="action_view_form_property_offer" type="object" class="oe_stat_button" icon="fa-handshake-o">
+                                <field name="offer_count" string="Offers" widget="statinfo"/>
+                            </button>
+                        </div>
+                        <group>
+                            <field name="name" widget="char_emojis" placeholder="Property Name"/>
+                            <field name="tag_ids" widget="many2many_tags" options="{'color_field' : 'color'}"/>
+                            <group>
+                                <field name="type_id"/>
+                                <field name="post_code" password="True"/>
+                                <field name="date_available"/>
+                            </group>
+                            <group>
+                                <field name="expected_price"/>
+                                <field name="best_offer"/>
+                                <field name="selling_price"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Description">
+                                <group>
+                                    <field name="description"/>
+                                    <field name="bedrooms"/>
+                                    <field name="living_area"/>
+                                    <field name="facades"/>
+                                    <field name="garage" widget="boolean_toggle"/>
+                                    <field name="garden"/>
+                                    <field name="garden_area"/>
+                                    <field name="garden_orientation" widget="radio"/>
+                                    <field name="total_area"/>
+                                </group>
+                            </page>
+                            <page string="Offers">
+                                <field name="offer_ids">
+                                    <tree editable="bottom">
+                                        <field name="price"/>
+                                        <field name="partner_id"/>
+                                        <field name="create_date"/>
+                                        <field name="validity"/>
+                                        <field name="deadline" widget="remaining_days"/>
+                                        <field name="status" readonly="1"/>
+                                         <button name="action_accept_offer" type="object" icon="fa-check" string="Accept"/>
+                                         <button name="action_cancel_offer" type="object" icon="fa-times" string="Decline"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Other Info">
+                                <group>
+                                    <field name="sales_id" widget="many2one_avatar_user"/>
+                                    <field name="buyer_id"/>
+                                    <field name="phone" widget="phone"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="action_menu_property" model="ir.actions.act_window">
+            <field name="name">Property</field>
+            <field name="res_model">real.estate.property</field>
+            <field name="view_mode">tree,kanban,pivot,graph,form</field>
+            <field name="view_id" ref="real_estate_property_tree_view"/>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create A New Property
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+
+        <record id="real_estate_property_type_tree_view" model="ir.ui.view">
+            <field name="name">real.estate.property.type.tree</field>
+            <field name="model">real.estate.property.type</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="real_estate_property_type_form_view" model="ir.ui.view">
+            <field name="name">real.estate.property.type.form</field>
+            <field name="model">real.estate.property.type</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="action_menu_property_type" model="ir.actions.act_window">
+            <field name="name">Property Type</field>
+            <field name="res_model">real.estate.property.type</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="real_estate_property_type_tree_view"/>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create A Property To Advertise
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>
