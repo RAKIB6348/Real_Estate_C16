@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <record id="action_server_approve" model="ir.actions.server">
+        <field name="name">Approve</field>
+        <field name="type">ir.actions.server</field>
+        <field name="model_id" ref="model_hospital_appointment"/>
+        <field name="binding_model_id" ref="model_hospital_appointment"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+            for record in records:
+                if record.state == 'confirm':
+                    record.action_approve()
+        </field>
+    </record>
+
+    <record id="appointment_view_calendar" model="ir.ui.view">
+        <field name="name">hospital.appointment.calendar</field>
+        <field name="model">hospital.appointment</field>
+        <field name="arch" type="xml">
+            <calendar string="Appointment" date_start="booking_date"
+                      mode="month" date_delay="duration"
+                      color="state" quick_add="False" hide_time="true" event_limit="5"
+                      form_view_id="%(appointment_view_form)d">
+                <field name="patient_id"/>
+                <field name="state" filters="1"/>
+                <field name="patient_id" filters="1"/>
+            </calendar>
+        </field>
+    </record>
+
+
+    <record id="appointment_view_activity" model="ir.ui.view">
+        <field name="name">hospital.appointment.activity</field>
+        <field name="model">hospital.appointment</field>
+        <field name="arch" type="xml">
+            <activity string="Appointments">
+                <field name="patient_id"/>
+                <field name="ref"/>
+                <templates>
+                    <div t-name="activity-box">
+                        <img t-att-src="activity_image('hospital.patient', 'image', record.patient_id.raw_value)"
+                             t-att-title="record.patient_id.value" t-att-alt="record.patient_id.value"/>
+                        <div>
+                            <field name="ref" display="full"/>
+                        </div>
+                    </div>
+                </templates>
+            </activity>
+        </field>
+    </record>
+
+
+    <record id="appointment_view_tree" model="ir.ui.view">
+        <field name="name">hospital.appointment.tree</field>
+        <field name="model">hospital.appointment</field>
+        <field name="arch" type="xml">
+            <tree decoration-warning="state == 'draft'"
+                  decoration-info="state == 'confirm'" decoration-success="state =='approve'"
+                  decoration-danger="state == 'canceled'" multi_edit="1">
+                <field name="sl_no"/>
+                <field name="patient_id"/>
+                <field name="ref"/>
+                <field name="doctor_id" widget="many2one_avatar_user"/>
+                <field name="gender"/>
+                <field name="activity_ids" widget="list_activity"/>
+                <field name="appointment_date"/>
+                <field name="booking_date"/>
+                <field name="state" widget="badge" decoration-warning="state == 'draft'"
+                       decoration-info="state == 'confirm'" decoration-success="state =='approve'"
+                       decoration-danger="state == 'canceled'"/>
+                <button name="action_approve" type="object" attrs="{'invisible': [('state', '!=', 'confirm')]}"
+                        class="fa fa-check btn-success"/>
+                <button name="action_confirm" type="object" attrs="{'invisible': [('state', '!=', 'draft')]}"
+                        class="fa fa-check btn-info"/>
+                <button name="action_cancel" type="object"
+                        attrs="{'invisible': [('state', 'not in', ('draft', 'confirm'))]}"
+                        class="fa fa-times btn-danger"/>
+                <field name="progress" widget="progressbar"/>
+
+
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="appointment_view_form" model="ir.ui.view">
+        <field name="name">hospital.appointment.form</field>
+        <field name="model">hospital.appointment</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_draft" string="Draft" type="object" states="approve" class="oe_highlight"/>
+                    <button name="action_confirm" string="Confirm" type="object" states="draft" class="oe_highlight"/>
+                    <button name="action_approve" string="Approve" type="object" states="confirm" class="oe_highlight"/>
+                    <button name="action_cancel" string="Cancel" type="object"/>
+                    <button name="action_share_whatsapp" string="Whatsapp" type="object" class="oe_highlight" icon="fa-whatsapp"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirm,approve"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="sl_no"/>
+                        </h1>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="priority" widget="priority" class="mr-3"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="patient_id"/>
+                            <field name="ref"/>
+                            <field name="doctor_id" widget="many2one_avatar_user"/>
+                            <field name="gender"/>
+                            <field name="booking_date" default_focus="1"/>
+                            <field name="duration"/>
+                            <field name="phone"/>
+                        </group>
+                        <group>
+                            <field name="appointment_date"/>
+
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" groups="base.group_multi_currency"/>
+
+
+                            <field name="progress" widget="gauge"/>
+                            <button name="%(odoo_tutorials.action_menu_patient)d" string="Action Button" type="action"
+                                    class="btn-primary"/>
+                            <button name="action_test" string="Test Button" type="object" class="btn-primary"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Prescription">
+                            <field name="prescription"
+                                   options="{'collaborative': true, 'resizable':true, 'codeview':true}"/>
+                        </page>
+                        <page string="Pharmacy">
+                            <field name="pharmacy_lines_ids">
+                                <tree editable="bottom">
+                                    <field name="product_id"/>
+                                    <field name="price"/>
+                                    <field name="qty"/>
+                                    <field name="currency_id" invisible="1"/>
+                                    <field name="subtotal" sum="Total"/>
+                                </tree>
+                                <form>
+                                    <group>
+                                        <field name="product_id"/>
+                                        <field name="price"/>
+                                        <field name="qty"/>
+
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_menu_appointment" model="ir.actions.act_window">
+        <field name="name">Appointment Card</field>
+        <field name="res_model">hospital.appointment</field>
+        <field name="view_mode">tree,form,calendar,activity</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+        <field name="view_id" ref="appointment_view_tree"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create New Appointment
+            </p>
+        </field>
+    </record>
+
+
+    <menuitem id="menu_appointment"
+              name="Appointment Card"
+              parent="menu_appointment_root"
+              action="action_menu_appointment"
+              sequence="0"/>
+
+</odoo>

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+
+    <record id="view_inherit_sale_order_form" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='payment_term_id']" position="after">
+                <field name="confirmed_user"/>
+            </xpath>
+        </field>
+    </record>
+
+
+    <record id="patient_view_search" model="ir.ui.view">
+        <field name="name">hospital.patient.search</field>
+        <field name="model">hospital.patient</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" string="Patient Name"/>
+                <field name="contact"/>
+                <filter name="filter_male" string="Male" domain="[('gender', '=', 'male')]"/>
+                <filter name="filter_female" string="Female" domain="[('gender', '=', 'female')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Gender" name="group_by_gender" domain="[]" context="{'group_by':'gender'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+
+    <record id="patient_view_tree" model="ir.ui.view">
+        <field name="name">hospital.patient.tree</field>
+        <field name="model">hospital.patient</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="age"/>
+                <field name="gender"/>
+                <field name="appointment_count" sum="Total Appointment"/>
+                <field name="date_of_birth"/>
+                <field name="ref"/>
+                <field name="contact"/>
+                <field name="patient_tag" widget="many2many_tags"
+                       options="{'color_field': 'color', 'no_create_edit': True}"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="patient_view_form" model="ir.ui.view">
+        <field name="name">hospital.patient.form</field>
+        <field name="model">hospital.patient</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_appointment" type="object" class="oe_stat_button" icon="fa-users">
+                            <field string="Appointments" name="appointment_count" widget="statinfo"/>
+                        </button>
+                    </div>
+                    <div class="alert alert-info text-center o_form_header"
+                         attrs="{'invisible': [('is_birthday', '=', False)]}">
+                        <a class="close" data-dismiss="alert" href="#">x</a>
+                        <div>
+                            <strong>Today is Birthday</strong>
+                        </div>
+                        <div>Wish to
+                            <field name="name" required="0" readonly="1"/>
+                        </div>
+                    </div>
+                    <field name="image" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <h4>
+                            <field name="ref" readonly="1"/>
+                        </h4>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <label for="name" string="Name" class="oe_edit_only"/>
+                            <field name="name" placeholder="PATIENT NAME" required="True"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="date_of_birth"/>
+                            <field name="contact"/>
+                            <field name="is_birthday"/>
+                        </group>
+                        <group>
+                            <field name="age" decoration-bf="1"/>
+                            <field name="gender" widget="radio"/>
+                            <!--                            <field name="ref"/>-->
+                            <field name="patient_tag" widget="many2many_tags"
+                                   options="{'color_field': 'color', 'no_create_edit': True}"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Other Information">
+                            <field name="parent" attrs="{'invisible' : [('age', '>', 12)]}"/>
+                            <field name="checkup_date"/>
+                            <field name="marital_status"/>
+                            <field name="partner_name" attrs="{'readonly' : [('marital_status', '!=', 'married')],
+                            'required' : [('marital_status', '=', 'married')]}"/>
+                        </group>
+                        <group string="Other Information">
+                            <field name="phone" widget="phone"/>
+                            <field name="email" widget="email"/>
+                            <field name="website" widget="url"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="note"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_menu_patient" model="ir.actions.act_window">
+        <field name="name">Patient Card</field>
+        <field name="res_model">hospital.patient</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create New Patient
+            </p>
+        </field>
+    </record>
+
+
+    <menuitem id="menu_patient"
+              name="Patient Card"
+              parent="menu_patient_root"
+              action="action_menu_patient"
+              sequence="0"/>
+
+</odoo>
